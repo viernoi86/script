@@ -187,26 +187,23 @@ local function toggleNoclip()
 end
 
 --// =====================
---// AUTO COIN SAFE FIX
+--// AUTO COIN SAFE
 --// =====================
-local autoFarmScript
-local function startAutoFarm()
-	if not autoFarmScript then
-		local response = request({
-			Url = "https://raw.githubusercontent.com/Zyn-ic/MM2-AutoFarm/refs/heads/main/Zynic-Auto-Farm/source.lua",
-			Method = "GET",
-		})
-		autoFarmScript = loadstring(response.Body)()
-	end
-end
-
-createButton("Auto Coins", function()
-	autoCoinEnabled = not autoCoinEnabled
-	if autoCoinEnabled then
-		startAutoFarm()
+RunService.Heartbeat:Connect(function()
+	if not autoCoinEnabled then return end
+	local c = LocalPlayer.Character
+	if not c or not c:FindFirstChild("HumanoidRootPart") then return end
+	local hrp = c.HumanoidRootPart
+	for _, container in pairs(workspace:GetChildren()) do
+		if container.Name == "CoinContainer" then
+			for _, coin in pairs(container:GetChildren()) do
+				if coin:IsA("BasePart") and (coin.Position - hrp.Position).Magnitude <= 15 then
+					coin.CFrame = hrp.CFrame
+				end
+			end
+		end
 	end
 end)
-
 
 --// =====================
 --// TP Murder/Sheriff
@@ -323,12 +320,4 @@ LocalPlayer.CharacterAdded:Connect(function()
 		flyEnabled = false
 		stopFly()
 	end
-end)
-
-createButton("TP Lobby", function()
-	local player = game.Players.LocalPlayer
-	local character = player.Character or player.CharacterAdded:Wait()
-	local hrp = character:WaitForChild("HumanoidRootPart")
-	local targetPosition = Vector3.new(-5051.38671875, 284.7870178222656, 83.59811401367188)
-	hrp.CFrame = CFrame.new(targetPosition)
 end)
