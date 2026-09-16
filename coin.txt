@@ -1,0 +1,107 @@
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+
+local function addESP(coinVisual)
+    local mainCoin = coinVisual:FindFirstChild("MainCoin", true)
+
+    if not mainCoin or not mainCoin:IsA("BasePart") then
+        return
+    end
+
+    if coinVisual:FindFirstChild("CoinESP") then
+        return
+    end
+
+    -- =========================
+    -- SURBRILLANCE JAUNE
+    -- =========================
+
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "CoinESP"
+    highlight.Adornee = coinVisual
+
+    highlight.FillColor = Color3.fromRGB(255, 215, 0)
+    highlight.FillTransparency = 0.55
+
+    highlight.OutlineColor = Color3.fromRGB(255, 230, 80)
+    highlight.OutlineTransparency = 0
+
+    -- Visible à travers les murs
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+
+    highlight.Parent = coinVisual
+
+
+    -- =========================
+    -- TEXTE + DISTANCE
+    -- =========================
+
+    local gui = Instance.new("BillboardGui")
+    gui.Name = "CoinESP"
+    gui.Adornee = mainCoin
+    gui.Size = UDim2.fromOffset(140, 35)
+    gui.StudsOffset = Vector3.new(0, 2.3, 0)
+    gui.AlwaysOnTop = true
+    gui.LightInfluence = 0
+    gui.MaxDistance = 10000
+    gui.Parent = coinVisual
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.fromScale(1, 1)
+    label.BackgroundTransparency = 1
+
+    label.Text = "🪙 COIN"
+    label.TextColor3 = Color3.fromRGB(255, 220, 0)
+    label.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    label.TextStrokeTransparency = 0.2
+
+    label.Font = Enum.Font.GothamBold
+    label.TextSize = 14
+
+    label.Parent = gui
+
+
+    -- =========================
+    -- DISTANCE
+    -- =========================
+
+    task.spawn(function()
+        while coinVisual.Parent and gui.Parent do
+
+            local character = player.Character
+            local root = character and character:FindFirstChild("HumanoidRootPart")
+
+            if root then
+                local distance = (root.Position - mainCoin.Position).Magnitude
+
+                label.Text = string.format(
+                    "🪙 COIN  •  %dm",
+                    math.floor(distance)
+                )
+            end
+
+            task.wait(0.1)
+        end
+    end)
+end
+
+
+-- Recherche des pièces déjà présentes
+for _, obj in ipairs(Workspace:GetDescendants()) do
+    if obj.Name == "CoinVisual" then
+        addESP(obj)
+    end
+end
+
+
+-- Détection des nouvelles maps/pièces
+Workspace.DescendantAdded:Connect(function(obj)
+
+    if obj.Name == "CoinVisual" then
+        task.wait(0.1)
+        addESP(obj)
+    end
+
+end)
