@@ -117,6 +117,18 @@ Le Loadstring principal est conçu pour fonctionner avec **MM2 et Arsenal** et s
 
 ---
 
+# ⚡ Exécuteur
+
+Le projet a notamment été **testé avec Potassium**.
+
+```text
+[✓] Potassium
+```
+
+La compatibilité peut varier selon l'exécuteur utilisé et ses mises à jour.
+
+---
+
 # 🛠️ Développement
 
 Viernoi86hub est un projet personnel que je développe progressivement.
@@ -148,5 +160,7 @@ Merci à toutes les personnes qui testent les scripts et qui suivent leur dével
 ## 👤 Viernoi86
 
 **Roblox Scripts • MM2 • Arsenal**
+
+⚡ **Tested with Potassium**
 
 🚧 **Projects currently in development**
