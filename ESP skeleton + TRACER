@@ -1,0 +1,144 @@
+--// ESP - Roblox Studio
+--// Place ce LocalScript dans StarterPlayer > StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+local ESP_ENABLED = true
+
+local drawings = {}
+
+local function createESP(player)
+	if player == LocalPlayer then return end
+
+	local data = {
+		lines = {},
+		skeleton = {},
+		name = nil
+	}
+
+	-- Tracer
+	data.tracer = Drawing.new("Line")
+	data.tracer.Thickness = 1.5
+	data.tracer.Color = Color3.fromRGB(255, 255, 255)
+
+	-- Nom
+	data.name = Drawing.new("Text")
+	data.name.Size = 14
+	data.name.Center = true
+	data.name.Outline = true
+	data.name.Color = Color3.fromRGB(255, 255, 255)
+
+	-- Squelette
+	local connections = {
+		{"Head", "UpperTorso"},
+		{"UpperTorso", "LowerTorso"},
+
+		{"UpperTorso", "LeftUpperArm"},
+		{"LeftUpperArm", "LeftLowerArm"},
+		{"LeftLowerArm", "LeftHand"},
+
+		{"UpperTorso", "RightUpperArm"},
+		{"RightUpperArm", "RightLowerArm"},
+		{"RightLowerArm", "RightHand"},
+
+		{"LowerTorso", "LeftUpperLeg"},
+		{"LeftUpperLeg", "LeftLowerLeg"},
+		{"LeftLowerLeg", "LeftFoot"},
+
+		{"LowerTorso", "RightUpperLeg"},
+		{"RightUpperLeg", "RightLowerLeg"},
+		{"RightLowerLeg", "RightFoot"},
+	}
+
+	for _, connection in ipairs(connections) do
+		local line = Drawing.new("Line")
+		line.Thickness = 1.5
+		line.Color = Color3.fromRGB(0, 255, 0)
+		line.Visible = false
+
+		table.insert(data.skeleton, {
+			line = line,
+			from = connection[1],
+			to = connection[2]
+		})
+	end
+
+	drawings[player] = data
+end
+
+local function removeESP(player)
+	local data = drawings[player]
+	if not data then return end
+
+	data.tracer:Remove()
+	data.name:Remove()
+
+	for _, bone in ipairs(data.skeleton) do
+		bone.line:Remove()
+	end
+
+	drawings[player] = nil
+end
+
+for _, player in ipairs(Players:GetPlayers()) do
+	createESP(player)
+end
+
+Players.PlayerAdded:Connect(createESP)
+Players.PlayerRemoving:Connect(removeESP)
+
+RunService.RenderStepped:Connect(function()
+	for player, data in pairs(drawings) do
+		local character = player.Character
+		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+
+		if not ESP_ENABLED or not character or not humanoid or humanoid.Health <= 0 then
+			data.tracer.Visible = false
+			data.name.Visible = false
+
+			for _, bone in ipairs(data.skeleton) do
+				bone.line.Visible = false
+			end
+
+			continue
+		end
+
+		-- Tracer vers le HumanoidRootPart
+		local root = character:FindFirstChild("HumanoidRootPart")
+
+		if root then
+			local pos, visible = Camera:WorldToViewportPoint(root.Position)
+
+			data.tracer.Visible = visible
+			data.tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
+			data.tracer.To = Vector2.new(pos.X, pos.Y)
+
+			data.name.Visible = visible
+			data.name.Text = player.Name
+			data.name.Position = Vector2.new(pos.X, pos.Y - 30)
+		else
+			data.tracer.Visible = false
+			data.name.Visible = false
+		end
+
+		-- Skeleton
+		for _, bone in ipairs(data.skeleton) do
+			local part1 = character:FindFirstChild(bone.from)
+			local part2 = character:FindFirstChild(bone.to)
+
+			if part1 and part2 then
+				local p1, v1 = Camera:WorldToViewportPoint(part1.Position)
+				local p2, v2 = Camera:WorldToViewportPoint(part2.Position)
+
+				bone.line.Visible = v1 and v2
+				bone.line.From = Vector2.new(p1.X, p1.Y)
+				bone.line.To = Vector2.new(p2.X, p2.Y)
+			else
+				bone.line.Visible = false
+			end
+		end
+	end
+end)
