@@ -1,4 +1,4 @@
---esp heal
+
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
@@ -99,7 +99,7 @@ while true do
     wait(0.3)
 end
 
---big hitbox saut infinie
+
 --[[
 	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
 ]]
