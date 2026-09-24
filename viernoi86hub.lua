@@ -7,6 +7,11 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/viernoi86/script/refs
     [286090429] = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/viernoi86/arsenal/refs/heads/main/arsenal.lua"))()
         print("Arsenal")
+    end,
+
+    [147848991] = function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/viernoi86/script/refs/heads/main/be-a-parkour-ninja.lua"))()
+        print("Be-A-Parkour-Ninja")
     end
 }
 
