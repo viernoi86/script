@@ -10,14 +10,15 @@ L'objectif est de créer des scripts simples, propres et pratiques, avec de nouv
 
 # 🎮 Compatibilité
 
-Le **Loadstring principal de Viernoi86hub est compatible avec les deux expériences** :
+Le **Loadstring principal de Viernoi86hub est compatible avec les trois expériences** :
 
 * 🔪 **Murder Mystery 2**
 * 🔫 **Arsenal**
+* 🥷 **Be a Parkour Ninja**
 
 Le script s'adapte **automatiquement à l'expérience dans laquelle il est exécuté** et charge les fonctionnalités correspondantes.
 
-Tu n'as donc pas besoin d'utiliser un Loadstring différent selon le jeu : **le même Loadstring peut être utilisé pour les deux expériences.**
+Tu n'as donc pas besoin d'utiliser un Loadstring différent selon le jeu : **le même Loadstring peut être utilisé pour les trois expériences.**
 
 ## 🚀 Loadstring
 
@@ -106,14 +107,35 @@ Le projet **Arsenal** est également pris en charge par Viernoi86hub.
 
 ---
 
+# 🥷 Be a Parkour Ninja Script
+
+Le projet **Be a Parkour Ninja** est désormais pris en charge par Viernoi86hub.
+
+## ✨ Fonctionnalités
+
+* 🎯 **Expand Hitbox** — agrandit les hitboxes des joueurs.
+* 👁️ **ESP** — affiche les joueurs avec l'ESP.
+* ♾️ **Infinite Jump** — permet de sauter indéfiniment.
+
+## ⚙️ Features
+
+```text
+[✓] Expand Hitbox
+[✓] ESP
+[✓] Infinite Jump
+```
+
+---
+
 # 📂 Projets
 
-| Projet           | Expérience       | Statut              |
-| ---------------- | ---------------- | ------------------- |
-| **Viernoi86hub** | Murder Mystery 2 | 🚧 En développement |
-| **Viernoi86hub** | Arsenal          | 🚧 En développement |
+| Projet           | Expérience         | Statut              |
+| ---------------- | ------------------ | ------------------- |
+| **Viernoi86hub** | Murder Mystery 2   | 🚧 En développement |
+| **Viernoi86hub** | Arsenal            | 🚧 En développement |
+| **Viernoi86hub** | Be a Parkour Ninja | 🚧 En développement |
 
-Le Loadstring principal est conçu pour fonctionner avec **MM2 et Arsenal** et s'adapte automatiquement en fonction de l'expérience.
+Le Loadstring principal est conçu pour fonctionner avec **MM2, Arsenal et Be a Parkour Ninja** et s'adapte automatiquement en fonction de l'expérience.
 
 ---
 
@@ -143,7 +165,7 @@ De nouvelles fonctionnalités pourront être ajoutées avec le temps.
 
 # 📌 Notes
 
-Les fonctionnalités peuvent dépendre des mises à jour des expériences **Murder Mystery 2**, **Arsenal** et de **Roblox**.
+Les fonctionnalités peuvent dépendre des mises à jour des expériences **Murder Mystery 2**, **Arsenal**, **Be a Parkour Ninja** et de **Roblox**.
 
 Le contenu et les fonctionnalités du hub peuvent évoluer au fil du développement.
 
@@ -159,7 +181,7 @@ Merci à toutes les personnes qui testent les scripts et qui suivent leur dével
 
 ## 👤 Viernoi86
 
-**Roblox Scripts • MM2 • Arsenal**
+**Roblox Scripts • MM2 • Arsenal • Be a Parkour Ninja**
 
 ⚡ **Tested with Potassium**
 
