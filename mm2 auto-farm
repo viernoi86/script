@@ -1,0 +1,258 @@
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+
+--------------------------------------------------
+-- CONFIG
+--------------------------------------------------
+
+local SPEED = 23
+local SEARCH_RADIUS = 200
+local AUTO_START = false
+
+--------------------------------------------------
+-- GUI
+--------------------------------------------------
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "AutoCoinGUI"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local button = Instance.new("TextButton")
+button.Name = "AutoCoinButton"
+button.Size = UDim2.fromOffset(190, 50)
+button.Position = UDim2.new(0, 20, 0.5, -25)
+
+button.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+button.Text = "Auto Coin : OFF"
+button.TextSize = 18
+button.Font = Enum.Font.GothamBold
+
+button.Parent = gui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 10)
+corner.Parent = button
+
+--------------------------------------------------
+-- VARIABLES
+--------------------------------------------------
+
+local enabled = AUTO_START
+local collected = {}
+
+--------------------------------------------------
+-- CHARACTER
+--------------------------------------------------
+
+local function getCharacter()
+	local character = player.Character
+
+	if not character then
+		character = player.CharacterAdded:Wait()
+	end
+
+	return character
+end
+
+local function getRoot()
+	local character = getCharacter()
+	return character:FindFirstChild("HumanoidRootPart")
+end
+
+--------------------------------------------------
+-- COIN CONTAINER
+--------------------------------------------------
+
+local function getCoinContainer()
+	local mansion = workspace:FindFirstChild("Mansion2")
+
+	if not mansion then
+		warn("Mansion2 introuvable")
+		return nil
+	end
+
+	local container = mansion:FindFirstChild("CoinContainer")
+
+	if not container then
+		warn("CoinContainer introuvable")
+		return nil
+	end
+
+	return container
+end
+
+--------------------------------------------------
+-- POSITION D'UNE COIN
+--------------------------------------------------
+
+local function getCoinPosition(coin)
+	if coin:IsA("BasePart") then
+		return coin.Position
+	end
+
+	if coin:IsA("Model") then
+		return coin:GetPivot().Position
+	end
+
+	local part = coin:FindFirstChildWhichIsA("BasePart", true)
+
+	if part then
+		return part.Position
+	end
+
+	return nil
+end
+
+--------------------------------------------------
+-- CHERCHE LA COIN LA PLUS PROCHE
+--------------------------------------------------
+
+local function getNearestCoin()
+	local root = getRoot()
+
+	if not root then
+		return nil
+	end
+
+	local container = getCoinContainer()
+
+	if not container then
+		return nil
+	end
+
+	local nearest = nil
+	local nearestDistance = SEARCH_RADIUS
+
+	for _, coin in ipairs(container:GetChildren()) do
+
+		if coin.Name == "Coin_Server"
+			and not collected[coin]
+			and coin.Parent then
+
+			local position = getCoinPosition(coin)
+
+			if position then
+				local distance = (root.Position - position).Magnitude
+
+				if distance < nearestDistance then
+					nearestDistance = distance
+					nearest = coin
+				end
+			end
+		end
+	end
+
+	return nearest
+end
+
+--------------------------------------------------
+-- DÉPLACEMENT PROGRESSIF
+--------------------------------------------------
+
+local function moveToCoin(coin)
+	local character = getCharacter()
+	local root = getRoot()
+
+	if not root or not coin or not coin.Parent then
+		return
+	end
+
+	local targetPosition = getCoinPosition(coin)
+
+	if not targetPosition then
+		return
+	end
+
+	local distance = (root.Position - targetPosition).Magnitude
+	local duration = math.max(distance / SPEED, 0.05)
+
+	local startPosition = root.Position
+	local startTime = os.clock()
+
+	while enabled and coin.Parent do
+
+		root = getRoot()
+
+		if not root then
+			break
+		end
+
+		local elapsed = os.clock() - startTime
+		local alpha = math.clamp(elapsed / duration, 0, 1)
+
+		local position = startPosition:Lerp(
+			targetPosition,
+			alpha
+		)
+
+		character:PivotTo(CFrame.new(position))
+
+		if alpha >= 1 then
+			break
+		end
+
+		task.wait()
+	end
+
+	-- On considère la coin traitée
+	collected[coin] = true
+end
+
+--------------------------------------------------
+-- AUTO COIN
+--------------------------------------------------
+
+local function autoCoinLoop()
+
+	while enabled do
+
+		local coin = getNearestCoin()
+
+		if coin then
+			moveToCoin(coin)
+
+			task.wait(0.1)
+		else
+			-- Nettoyage des coins qui n'existent plus
+			for coin in pairs(collected) do
+				if not coin.Parent then
+					collected[coin] = nil
+				end
+			end
+
+			task.wait(0.5)
+		end
+	end
+end
+
+--------------------------------------------------
+-- BOUTON
+--------------------------------------------------
+
+local function updateButton()
+
+	if enabled then
+		button.Text = "Auto Coin : ON"
+		button.BackgroundColor3 = Color3.fromRGB(45, 180, 75)
+	else
+		button.Text = "Auto Coin : OFF"
+		button.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+	end
+end
+
+button.MouseButton1Click:Connect(function()
+
+	enabled = not enabled
+
+	updateButton()
+
+	if enabled then
+		task.spawn(autoCoinLoop)
+	end
+end)
+
+updateButton()
