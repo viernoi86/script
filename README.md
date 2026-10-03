@@ -53,7 +53,7 @@ La partie **Murder Mystery 2** est actuellement la partie la plus développée d
 
 | Touche          | Fonction                |
 | --------------- | ----------------------- |
-| **Right Shift** | Afficher / masquer l'UI |
+| **LEft alt** | Afficher / masquer l'UI |
 
 ## ⚙️ Features
 
