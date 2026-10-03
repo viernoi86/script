@@ -8,6 +8,11 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/viernoi86/script/refs
     loadstring(game:HttpGet("https://raw.githubusercontent.com/viernoi86/arsenal/refs/heads/main/arsenal.lua"))()
         print("Arsenal")
     end,
+    [17887390746] = function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/viernoi86/script/refs/heads/main/Unnamed-Shooter.lua"))()
+        print("Unnamed-Shooter")
+    end,
+    
 
     [147848991] = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/viernoi86/script/refs/heads/main/be-a-parkour-ninja.lua"))()
