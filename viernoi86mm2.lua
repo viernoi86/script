@@ -501,8 +501,22 @@ createButton("Grab The Gun", function()
 	end
 end)
 
-createButton("Auto Coins", function()
-	autoCoinEnabled = not autoCoinEnabled
+createButton("Auto Farm", function()
+	local autoFarmOk, autoFarmErr = pcall(function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/viernoi86/script/refs/heads/main/mm2%20auto-farm"))()
+	end)
+
+	if not autoFarmOk then
+		warn("Erreur au lancement d'Auto Farm : " .. tostring(autoFarmErr))
+	end
+
+	local antiAFKOk, antiAFKErr = pcall(function()
+		loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-AntiAFK-script-18076"))()
+	end)
+
+	if not antiAFKOk then
+		warn("Erreur au lancement d'Anti-AFK : " .. tostring(antiAFKErr))
+	end
 end)
 
 createButton("ESP MM2", toggleESP)
