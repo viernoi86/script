@@ -69,7 +69,7 @@ La partie **Murder Mystery 2** est actuellement la partie la plus développée d
 [✓] Loop TP Sheriff
 [✓] TP Lobby
 [✓] TP Map
-[✓] Right Shift UI Toggle
+[✓] Left Shift UI Toggle
 ```
 
 ---
