@@ -3,12 +3,11 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
 --------------------------------------------------
--- CONFIG
+-- CONFIGURATION
 --------------------------------------------------
 
 local SPEED = 23
 local SEARCH_RADIUS = 200
-local AUTO_START = false
 
 --------------------------------------------------
 -- GUI
@@ -41,7 +40,7 @@ corner.Parent = button
 -- VARIABLES
 --------------------------------------------------
 
-local enabled = AUTO_START
+local enabled = false
 local collected = {}
 
 --------------------------------------------------
@@ -60,29 +59,41 @@ end
 
 local function getRoot()
 	local character = getCharacter()
+
 	return character:FindFirstChild("HumanoidRootPart")
+		or character.PrimaryPart
 end
 
 --------------------------------------------------
--- COIN CONTAINER
+-- DÉTECTION AUTOMATIQUE DES COIN CONTAINERS
 --------------------------------------------------
 
-local function getCoinContainer()
-	local mansion = workspace:FindFirstChild("Mansion2")
+local function getCoinContainers()
 
-	if not mansion then
-		warn("Mansion2 introuvable")
-		return nil
+	local containers = {}
+
+	for _, object in ipairs(workspace:GetDescendants()) do
+
+		if object.Name == "CoinContainer" then
+
+			local hasCoins = false
+
+			for _, descendant in ipairs(object:GetDescendants()) do
+
+				if descendant.Name == "Coin_Server" then
+					hasCoins = true
+					break
+				end
+
+			end
+
+			if hasCoins then
+				table.insert(containers, object)
+			end
+		end
 	end
 
-	local container = mansion:FindFirstChild("CoinContainer")
-
-	if not container then
-		warn("CoinContainer introuvable")
-		return nil
-	end
-
-	return container
+	return containers
 end
 
 --------------------------------------------------
@@ -90,15 +101,29 @@ end
 --------------------------------------------------
 
 local function getCoinPosition(coin)
+
+	-- Si Coin_Server est directement une Part
 	if coin:IsA("BasePart") then
 		return coin.Position
 	end
 
+	-- Si Coin_Server est un Model
 	if coin:IsA("Model") then
-		return coin:GetPivot().Position
+
+		local success, pivot = pcall(function()
+			return coin:GetPivot()
+		end)
+
+		if success and pivot then
+			return pivot.Position
+		end
 	end
 
-	local part = coin:FindFirstChildWhichIsA("BasePart", true)
+	-- Sinon cherche une Part à l'intérieur
+	local part = coin:FindFirstChildWhichIsA(
+		"BasePart",
+		true
+	)
 
 	if part then
 		return part.Position
@@ -112,35 +137,41 @@ end
 --------------------------------------------------
 
 local function getNearestCoin()
+
 	local root = getRoot()
 
 	if not root then
 		return nil
 	end
 
-	local container = getCoinContainer()
-
-	if not container then
-		return nil
-	end
-
 	local nearest = nil
 	local nearestDistance = SEARCH_RADIUS
 
-	for _, coin in ipairs(container:GetChildren()) do
+	-- Recherche automatique de toutes les maps
+	-- contenant un CoinContainer
+	local containers = getCoinContainers()
 
-		if coin.Name == "Coin_Server"
-			and not collected[coin]
-			and coin.Parent then
+	for _, container in ipairs(containers) do
 
-			local position = getCoinPosition(coin)
+		for _, coin in ipairs(container:GetDescendants()) do
 
-			if position then
-				local distance = (root.Position - position).Magnitude
+			if coin.Name == "Coin_Server"
+				and not collected[coin]
+				and coin.Parent then
 
-				if distance < nearestDistance then
-					nearestDistance = distance
-					nearest = coin
+				local position = getCoinPosition(coin)
+
+				if position then
+
+					local distance =
+						(root.Position - position).Magnitude
+
+					if distance < nearestDistance then
+
+						nearestDistance = distance
+						nearest = coin
+
+					end
 				end
 			end
 		end
@@ -150,14 +181,19 @@ local function getNearestCoin()
 end
 
 --------------------------------------------------
--- DÉPLACEMENT PROGRESSIF
+-- DÉPLACEMENT VERS LA COIN
 --------------------------------------------------
 
 local function moveToCoin(coin)
+
+	if not coin or not coin.Parent then
+		return
+	end
+
 	local character = getCharacter()
 	local root = getRoot()
 
-	if not root or not coin or not coin.Parent then
+	if not root then
 		return
 	end
 
@@ -167,11 +203,18 @@ local function moveToCoin(coin)
 		return
 	end
 
-	local distance = (root.Position - targetPosition).Magnitude
-	local duration = math.max(distance / SPEED, 0.05)
+	local distance =
+		(root.Position - targetPosition).Magnitude
+
+	local duration =
+		math.max(distance / SPEED, 0.05)
 
 	local startPosition = root.Position
 	local startTime = os.clock()
+
+	--------------------------------------------------
+	-- Mouvement progressif
+	--------------------------------------------------
 
 	while enabled and coin.Parent do
 
@@ -181,15 +224,25 @@ local function moveToCoin(coin)
 			break
 		end
 
-		local elapsed = os.clock() - startTime
-		local alpha = math.clamp(elapsed / duration, 0, 1)
+		local elapsed =
+			os.clock() - startTime
 
-		local position = startPosition:Lerp(
-			targetPosition,
-			alpha
+		local alpha =
+			math.clamp(
+				elapsed / duration,
+				0,
+				1
+			)
+
+		local position =
+			startPosition:Lerp(
+				targetPosition,
+				alpha
+			)
+
+		character:PivotTo(
+			CFrame.new(position)
 		)
-
-		character:PivotTo(CFrame.new(position))
 
 		if alpha >= 1 then
 			break
@@ -198,8 +251,26 @@ local function moveToCoin(coin)
 		task.wait()
 	end
 
-	-- On considère la coin traitée
+	-- Empêche de sélectionner immédiatement
+	-- la même coin
 	collected[coin] = true
+
+end
+
+--------------------------------------------------
+-- NETTOYAGE
+--------------------------------------------------
+
+local function cleanCollected()
+
+	for coin in pairs(collected) do
+
+		if not coin.Parent then
+			collected[coin] = nil
+		end
+
+	end
+
 end
 
 --------------------------------------------------
@@ -210,21 +281,21 @@ local function autoCoinLoop()
 
 	while enabled do
 
+		cleanCollected()
+
 		local coin = getNearestCoin()
 
 		if coin then
+
 			moveToCoin(coin)
 
 			task.wait(0.1)
-		else
-			-- Nettoyage des coins qui n'existent plus
-			for coin in pairs(collected) do
-				if not coin.Parent then
-					collected[coin] = nil
-				end
-			end
 
+		else
+
+			-- Aucune coin trouvée pour le moment
 			task.wait(0.5)
+
 		end
 	end
 end
@@ -236,12 +307,21 @@ end
 local function updateButton()
 
 	if enabled then
+
 		button.Text = "Auto Coin : ON"
-		button.BackgroundColor3 = Color3.fromRGB(45, 180, 75)
+
+		button.BackgroundColor3 =
+			Color3.fromRGB(45, 180, 75)
+
 	else
+
 		button.Text = "Auto Coin : OFF"
-		button.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+
+		button.BackgroundColor3 =
+			Color3.fromRGB(35, 35, 35)
+
 	end
+
 end
 
 button.MouseButton1Click:Connect(function()
@@ -253,6 +333,19 @@ button.MouseButton1Click:Connect(function()
 	if enabled then
 		task.spawn(autoCoinLoop)
 	end
+
+end)
+
+--------------------------------------------------
+-- RESPAWN
+--------------------------------------------------
+
+player.CharacterAdded:Connect(function()
+
+	-- On vide les anciennes références
+	-- après un respawn.
+	table.clear(collected)
+
 end)
 
 updateButton()
