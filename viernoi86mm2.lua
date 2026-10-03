@@ -823,11 +823,11 @@ createButton("TP Map", function()
 end)
 
 --// =====================
---// TOGGLE UI - RIGHT SHIFT
+--// TOGGLE UI - ALT GAUCHE
 --// =====================
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
-	if input.KeyCode == Enum.KeyCode.RightShift then
+	if input.KeyCode == Enum.KeyCode.LeftAlt then
 		Frame.Visible = not Frame.Visible
 	end
 end)
