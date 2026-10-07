@@ -206,7 +206,7 @@ verifyButton.MouseButton1Click:Connect(function()
 
         --// Exécution du script
         loadstring(game:HttpGet(
-            "https://raw.githubusercontent.com/viernoi86/script/refs/heads/main/viernoi86hub.lua"
+            "https://raw.githubusercontent.com/viernoi86/script/refs/heads/main/base.lua"
         ))()
 
     else
