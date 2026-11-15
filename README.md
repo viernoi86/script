@@ -10,7 +10,7 @@ L'objectif est de créer des scripts simples, propres et pratiques, avec de nouv
 
 # 🎮 Compatibilité
 
-Le **Loadstring principal de Viernoi86hub est compatible avec les trois expériences** :
+Le **Loadstring principal de The cat factory est compatible avec les trois expériences** :
 
 * 🔪 **Murder Mystery 2**
 * 🔫 **Arsenal**
