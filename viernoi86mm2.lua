@@ -29,7 +29,7 @@ local noclipConnection
 
 --// UI
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "Viernoi86Hub"
+ScreenGui.Name = "The cat factory"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = CoreGui
 
@@ -45,7 +45,7 @@ local Title = Instance.new("TextLabel")
 Title.Parent = Frame
 Title.Size = UDim2.new(1, 0, 0, 30)
 Title.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Title.Text = "Viernoi86 Hub"
+Title.Text = "The cat factory"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 16
 
