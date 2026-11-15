@@ -1,0 +1,58 @@
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "DeviceSelector"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Parent = gui
+frame.Size = UDim2.fromOffset(280, 145)
+frame.Position = UDim2.fromScale(0.5, 0.5)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+frame.BorderSizePixel = 1
+
+local title = Instance.new("TextLabel")
+title.Parent = frame
+title.Size = UDim2.new(1, 0, 0, 45)
+title.BackgroundTransparency = 1
+title.Text = "Select device"
+title.TextColor3 = Color3.fromRGB(230, 230, 230)
+title.TextSize = 17
+title.Font = Enum.Font.Gotham
+
+local function createButton(name, x, callback)
+    local button = Instance.new("TextButton")
+    button.Parent = frame
+    button.Size = UDim2.fromOffset(115, 55)
+    button.Position = UDim2.fromOffset(x, 65)
+    button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    button.BorderColor3 = Color3.fromRGB(85, 85, 85)
+    button.Text = name
+    button.TextColor3 = Color3.fromRGB(235, 235, 235)
+    button.TextSize = 15
+    button.Font = Enum.Font.Gotham
+
+    button.Activated:Connect(callback)
+end
+
+createButton("PC", 15, function()
+    print("you choose pc device")
+    gui:Destroy()
+
+    loadstring(game:HttpGet(
+        "https://raw.githubusercontent.com/viernoi86/script/main/viernoi86mm2.lua"
+    ))()
+end)
+
+createButton("MOBILE", 150, function()
+    print("you choose mobile")
+    gui:Destroy()
+
+    loadstring(game:HttpGet(
+        "https://raw.githubusercontent.com/viernoi86/script/refs/heads/main/mob-mm2.lua"
+    ))()
+end)
