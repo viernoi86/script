@@ -2,9 +2,9 @@
 
 Bienvenue sur mes projets Roblox.
 
-Je développe plusieurs scripts Roblox sous le nom **Viernoi86**. Les projets sont encore en développement et évoluent progressivement.
+Je développe ce scripts Roblox  Le projets est encore en développement et évoluent progressivement.
 
-L'objectif est de créer des scripts simples, propres et pratiques, avec de nouvelles fonctionnalités ajoutées au fur et à mesure.
+L'objectif est de créer un scripts simples, propres et pratiques, avec de nouvelles fonctionnalités ajoutées au fur et à mesure.
 
 ---
 
