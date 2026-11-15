@@ -23,7 +23,7 @@ Tu n'as donc pas besoin d'utiliser un Loadstring différent selon le jeu : **le 
 ## 🚀 Loadstring
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/viernoi86/script/refs/heads/main/viernoi86hub.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/viernoi86/viernoi86hub/refs/heads/main/viernoi86hub.lua"))()
 ```
 
 > Le script détecte l'expérience et s'adapte automatiquement en fonction du jeu.
