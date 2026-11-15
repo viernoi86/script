@@ -3,7 +3,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/viernoi86/script/refs
 
 local games = {
     [142823291] = function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/viernoi86/script/refs/heads/main/viernoi86mm2.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/viernoi86/script/refs/heads/main/loader%20mobil%20pc%20mm2"))()
         print("MM2")
     end,
 
